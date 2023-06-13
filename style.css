@@ -1,0 +1,14 @@
+a {
+    color: white;
+    text-decoration:underline;
+}
+
+footer{
+    position: fixed;
+    text-align: center;
+    bottom: 0;
+    margin-bottom: 10px;
+    width: 100%;
+    color: white;
+}
+
