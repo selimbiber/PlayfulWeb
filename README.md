@@ -13,3 +13,5 @@
 
 #### Preview:
 
+    https://htmlpreview.github.io/?https://github.com/selimbiber/Play-Rock-Paper-Scissors/blob/main/index.html
+
