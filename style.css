@@ -1,3 +1,11 @@
+body {
+    background-image: url(./assets/The-Terminator-Background.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-color: black;
+    object-fit: cover;
+}
+
 a {
     color: white;
     text-decoration:underline;
