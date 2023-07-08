@@ -1,66 +1,140 @@
-// For The Odin Project: Play Rock Paper Scissors Against to Computer
+/* For The Odin Project: Play Rock Paper Scissors Against to Computer */
 
-let playerScore = 0;
-let computerScore = 0;
+// Container
 
-function playRound(playerSelection, computerSelection) {
-    playerSelection = playerSelection[0].toUpperCase() + playerSelection.substring(1).toLowerCase();
+    const container = document.querySelector('.container')
 
-    const computerChoiceArray = ['Rock', 'Paper', 'Scissors']
-    computerSelection = computerChoiceArray[Math.floor(Math.random() * 3)];
+// Heading
 
-        if (playerSelection.length === 0) {
-            alert('You cannot enter a empty value. Please try again with Rock, Paper or Scissors.')
-        } else if (playerSelection === 'Rock' && computerSelection === 'Scissors') {
-            playerScore++;
-            alert('You won this round! Rock beats Scissors.')
-        } else if (playerSelection === 'Paper' && computerSelection === 'Rock') {
-            playerScore++;
-            alert('You won this round! Paper beats Rock.')
-        } else if (playerSelection === 'Scissors' && computerSelection === 'Paper') {
-            playerScore++;
-            alert('You won this round! Scissors beats Paper.')
-        } else if (computerSelection === 'Rock' && playerSelection === 'Scissors') {
-            computerScore++;
-            alert('The computer won this round! Rock beats Scissors.')
-        } else if (computerSelection === 'Paper' && playerSelection === 'Rock') {
-            computerScore++;
-            alert('The computer won this round! Paper beats Rock.')
-        } else if (computerSelection === 'Scissors' && playerSelection === 'Paper') {
-            computerScore++;
-            alert('The computer won this round! Scissors beats Paper.')
-        } else if (playerSelection === computerSelection) {
-            alert('Player and Computer tied.')
-        } else {
-            alert('You entered the wrong value. You can only choose Rock, Paper or Scissors.')
-        }
-}
+    const heading = document.querySelector('.heading')
 
-function game() {
-    for (let i = 1; i <= 5; i++) {
-        playRound( prompt('Choose: Rock, Paper or Scissors.') );
-    }
-    if (playerScore > computerScore) {
-        alert("Yeah! You beat the computer. There is your total score: " + playerScore + ', ' + "and computer's total score: " + computerScore);
+// Report
 
-    } else if (computerScore > playerScore) {
-        alert("Oh no! Computer beat you. There is your total score: " + playerScore + ', ' + "and computer's total score: " + computerScore);
-    } else {
-        alert("What luck! You are tied with the computer. There is your total score: " + playerScore + ', ' + "and computer's total score: " + computerScore);
-    }
-    playAgainQuestion(  prompt("Do you wanna play game again for 5 round?") );
+    const report = document.querySelector('.report')
+
+// Icons 
+
+    const iconsArea = document.querySelector('.iconsArea')
+    const leftIcon = document.getElementById('left-icon')
+    const rightIcon = document.getElementById('right-icon')
+
+// Scores
+
+    const scoresArea = document.querySelector('.scoresArea')
+    const playerScoreDOM = document.querySelector('.playerScore')
+    const computerScoreDOM = document.querySelector('.computerScore')
+
+    // For Functions
+
+    let playerScore = 0;
+    let computerScore = 0;
+
+// Options
+
+    const optionsArea = document.querySelector('.optionsArea')
+    const rock = document.querySelector('.rock');
+    const paper = document.querySelector('.paper');
+    const scissors = document.querySelector('.scissors')
+
+// Events 
+
+    rock.addEventListener('click', (get) => { game(get.target.getAttribute('alt')); });
+
+    paper.addEventListener('click', (get) => { game(get.target.getAttribute('alt')); });
     
-    function playAgainQuestion (answer) {
-        answer = answer[0].toUpperCase() + answer.substring(1).toLowerCase();
-        
-        if (answer === 'Yes') {
-            game();
-        } else if (answer === 'No') {
-            return alert("Bye!");
+    scissors.addEventListener('click', (get) => { game(get.target.getAttribute('alt')); });
+
+// Functions
+
+function game(playerChoice) {
+    
+    playRound(playerChoice);
+
+    playerScoreDOM.textContent = playerScore
+    computerScoreDOM.textContent = computerScore
+  
+    if (playerScore === 5 || computerScore === 5) {
+        if (playerScore > computerScore) {
+            heading.textContent = 'Yeah! You beat the computer.';
+            heading.classList = '';
+            heading.setAttribute('class', 'win');
+        } else if (computerScore > playerScore) {
+            heading.textContent = 'Oh no! Computer beat you.';
+            heading.classList = '';
+            heading.setAttribute('class', 'lose');
         } else {
-            alert("I can't understand you. :/ Please check your answer: Yes or No?")
-            playAgainQuestion( prompt("Do you wanna play game again for 5 round?") );
+            heading.textContent = 'What luck! You are tied with the computer.'
+            heading.classList = ''
+            heading.setAttribute('class', 'draw')
         }
+        playAgainQuestion();
     }
 }
-game();
+
+function playRound(playerChoice) {
+    
+    const computerSelectionsArray = ['Rock', 'Paper', 'Scissors']
+    let computerChoice = computerSelectionsArray[Math.floor(Math.random() * computerSelectionsArray.length)];
+
+        if ( (playerChoice === 'Rock' && computerChoice === 'Scissors') 
+        || (playerChoice === 'Paper' && computerChoice === 'Rock')
+        || (playerChoice === 'Scissors' && computerChoice === 'Paper') ) {
+
+            report.textContent = 'You won this round!'
+            report.setAttribute('class', 'win')
+            return ++playerScore;
+            
+        } else if ( (computerChoice === 'Rock' && playerChoice === 'Scissors')
+        || (computerChoice === 'Paper' && playerChoice === 'Rock') 
+        || (computerChoice === 'Scissors' && playerChoice === 'Paper') ) {
+
+            report.textContent = 'The computer won this round!'
+            report.setAttribute('class', 'lose')
+            return ++computerScore;
+            
+        } else {
+
+            report.textContent = 'Player and Computer tied.'
+            report.setAttribute('class', 'draw')
+        }
+}
+  
+function playAgainQuestion() {
+    report.classList = '';
+    report.setAttribute('class', 'report');
+    report.textContent = 'Do you want to play again?'
+  
+    leftIcon.classList.remove('playerIcon')
+    leftIcon.setAttribute('class', 'answerYes')
+    leftIcon.setAttribute('src', './assets/yes-icon.webp')
+    leftIcon.setAttribute('alt', 'Yes')
+
+    leftIcon.addEventListener('click', (icon) => {
+        restartGame();
+    })
+  
+    rightIcon.classList.remove('computerIcon')
+    rightIcon.setAttribute('class', 'answerNo')
+    rightIcon.setAttribute('src', './assets/no-icon.svg')
+    rightIcon.setAttribute('alt', 'No')
+
+    rightIcon.addEventListener('click', (icon) => {
+        finishGame();
+    })
+  
+    iconsArea.style.gap = '5rem'
+    scoresArea.remove()
+    optionsArea.remove()
+}
+  
+function restartGame() {
+    location.reload()
+}
+  
+function finishGame() {
+    container.removeChild(container.firstElementChild)
+    container.children[0].textContent = 'GOODBYE!'
+    container.children[0].style.fontSize = '10rem'
+    container.children[0].style.color = 'red'
+    setInterval( () => {window.close()}, 3000)
+}
