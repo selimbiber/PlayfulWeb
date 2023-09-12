@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			rel="shortcut icon"
+			href="https://cdn-icons-png.flaticon.com/128/10199/10199746.png"
+			type="image/x-icon"
+		/>
+		<!-- FONTS START -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+			rel="stylesheet"
+		/>
+		<!-- FONTS END -->
+		<!-- STYLES START -->
+		<link rel="stylesheet" href="./styles/reset.css" />
+		<link rel="stylesheet" href="./styles/main.css" />
+		<!-- STYLES END -->
+		<title>Play: Tic Tac Toe</title>
+	</head>
+	<body>
+		<header class="header-section">
+			<h1 class="heading">Play: Tic Tac Toe</h1>
+		</header>
+		<main class="main-section">
+			<section class="game-board_subsection">
+				<div squareIndex="0" class="square square-1"></div>
+				<div squareIndex="1" class="square square-2"></div>
+				<div squareIndex="2" class="square square-3"></div>
+				<div squareIndex="3" class="square square-4"></div>
+				<div squareIndex="4" class="square square-5"></div>
+				<div squareIndex="5" class="square square-6"></div>
+				<div squareIndex="6" class="square square-7"></div>
+				<div squareIndex="7" class="square square-8"></div>
+				<div squareIndex="8" class="square square-9"></div>
+			</section>
+			<section class="status-message_subsection">
+				<p class="status-message_text"></p>
+				<figure class="winner-player_figure">
+					<img
+						src="https://pixelartmaker-data-78746291193.nyc3.digitaloceanspaces.com/image/6dbb116adc30ec5.png"
+						alt="pixel gamer image"
+						title="Pixel Guy - Rick Astley"
+						class="gamer-img"
+					/>
+					<img
+						src="./images/pixelComputer.png"
+						alt="pixel computer image"
+						title="Pixel Computer - Steve@seekpng.com"
+						class="computer-img"
+					/>
+				</figure>
+			</section>
+			<section class="display-controller_subsection">
+				<!-- <div class="player-selection_container">
+					<p class="selectX-player_text">Select <span>X</span> Player:</p>
+					<button id="gamerX-btn" class="default-player-btn">GAMER</button> or
+					<button id="computerX-btn" class="default-player-btn">
+						COMPUTER
+					</button>
+				</div>
+				<div class="player-selection_container">
+					<p class="selectO-player_text">Select <span>O</span> Player:</p>
+					<button id="gamerO-btn" class="default-player-btn">GAMER</button> or
+					<button id="computerO-btn" class="default-player-btn">
+						COMPUTER
+					</button>
+				</div> -->
+				<button class="restart-btn">RESTART</button>
+			</section>
+		</main>
+		<footer class="footer-section">
+			Challenge by &nbsp;
+			<a
+				href="https://www.theodinproject.com/lessons/node-path-javascript-tic-tac-toe"
+				title="The Odin Project: Tic Tac Toe"
+				target="_blank"
+			>
+				The Odin Project
+			</a>
+			<a
+				href="https://github.com/selimbiber/Pure-JavaScript-Projects"
+				title="Selim Biber"
+				target="_blank"
+				><img
+					class="github-logo"
+					src="images/github-logo.svg"
+					alt="github logo" /></a
+			>Coded by &nbsp;
+			<a
+				href="https://github.com/selimbiber/"
+				title="GitHub: selimbiber"
+				target="_blank"
+				>Selim Biber</a
+			>
+		</footer>
+		<script src="main.js"></script>
+	</body>
+</html>

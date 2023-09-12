@@ -1,0 +1,209 @@
+/* COMMON STYLES */
+
+:root {
+    --primary-theme-color: #030303;
+    --secondary-theme-color: #848482;
+    --tertiary-theme-color:#F3E5AB;
+    --x-marker-color: #EF0107;
+    --o-marker-color: #00308F;
+}
+
+body, .square, .status-message_subsection, .winner-player_figure, .display-controller_subsection, .player-selection_container, .footer-section {
+    display: flex;
+}
+
+body, .square, .status-message_subsection, .display-controller_subsection, .player-selection_container {
+    justify-content: center;
+    align-items: center;
+}
+
+/* CUSTOM STYLES */
+
+body {
+    font-family: 'VT323', monospace;
+    flex-direction: column;
+    row-gap: 2rem;
+    text-align: center;
+    background-color: var(--tertiary-theme-color);
+}
+
+/* HEADER SECTION */
+
+.heading {
+    font-size: 3.7rem;
+    font-weight: bold;
+    color: var(--primary-theme-color);
+    text-shadow: 3px 3px var(--secondary-theme-color);
+}
+
+/* MAIN SECTION */
+
+.main-section {
+    margin: auto 0;
+}
+
+/* GAME BOARD SUBSECTION */
+
+.game-board_subsection {
+    width: 30rem;
+    display: grid;
+    grid-template: repeat(3, 10rem) / repeat(3, 10rem);
+    margin: 0 auto;
+    box-shadow: 0 0 3rem 1px var(--secondary-theme-color);
+}
+
+.square {
+    border: .1rem solid var(--secondary-theme-color);
+    cursor: pointer;
+    font-size: 10rem;
+    font-weight: bold;
+    background-color: var(--tertiary-theme-color);
+    text-shadow: 3px 3px var(--primary-theme-color);;
+}
+
+.square-1, .square-2, .square-3 {
+    border-top: 0;
+}
+
+.square-1, .square-4, .square-7 {
+    border-left: 0;
+}
+
+.square-3, .square-6, .square-9 {
+    border-right: 0;
+}
+
+.square-7, .square-8, .square-9 {
+    border-bottom: 0;
+}
+
+.x-mark {
+    color: var(--x-marker-color);
+}
+
+.o-mark {
+    color: var(--o-marker-color);
+}
+
+/* STATUS MESSAGE SUBSECTION */
+
+.status-message_subsection {
+    flex-direction: column;
+}
+
+.status-message_text {
+    font-size: 4.4rem;
+}
+
+.game-draw {
+    color: var(--secondary-theme-color);
+    text-shadow: 3px 3px var(--primary-theme-color);
+}
+
+.x-win {
+    color: var(--x-marker-color);
+    text-shadow: 3px 3px var(--o-marker-color);
+}
+
+.o-win {
+    color: var(--o-marker-color);
+    text-shadow: 3px 3px var(--x-marker-color);
+}
+
+.winner-player_figure {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.winner-player_figure img {
+    height: 9rem;
+}
+
+.winner-player_figure .computer-img {
+    display: none;
+    height: 10.5rem;
+    margin-top: .5rem;
+}
+
+/* DISPLAY CONTROLLER SUBSECTION */
+
+.display-controller_subsection {
+    flex-direction: column;
+    row-gap: 2rem;
+}
+
+.player-selection_container {
+    column-gap: .5rem;
+    border: .3rem dotted var(--primary-theme-color);
+    height: 5.3rem;
+    width: 30rem;
+}
+
+.player-selection_container > p {
+    font-weight: bold;
+}
+
+.selectX-player_text span {
+    color: var(--x-marker-color);
+    font-size: 2rem;
+}
+
+.selectO-player_text span {
+    color: var(--o-marker-color);
+    font-size: 2rem;
+}
+
+.default-player-btn {
+    height: 3rem;
+    width: 7rem;
+    outline: .3rem dotted var(--primary-theme-color);
+    color: var(--tertiary-theme-color);
+}
+
+.active-player-btn {
+    border: .3rem solid var(--tertiary-theme-color);
+}
+
+#gamerX-btn, #computerX-btn {
+    background-color: var(--x-marker-color);
+}
+
+#gamerO-btn, #computerO-btn {
+    background-color: var(--o-marker-color);
+}
+
+.restart-btn {
+    height: 5rem;
+    width: 10rem;
+    background-image: linear-gradient(to right, var(--x-marker-color), var(--o-marker-color));
+    font-size: 3rem;
+    color: var(--tertiary-theme-color);
+}
+
+/* FOOTER SECTION */
+
+.footer-section {
+    font-size: 1.35rem;
+    color: var(--secondary-theme-color);
+    justify-content: center;
+    gap: .1rem;
+    margin: auto 0 .1rem;
+    text-align: center;
+}
+
+.footer-section > a {
+    color: var(--primary-theme-color);
+    font-weight: bold;
+    text-decoration:none;
+}
+
+.github-logo {
+    height: 1.5rem;
+    width: 1.5rem;
+    margin: 0 .3rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.github-logo:hover {
+    transform: rotate(360deg) scale(1.2);
+}
