@@ -1,0 +1,199 @@
+#root, #__next {
+	isolation: isolate;
+}
+
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+    margin: 0;  
+    padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+    font-size: 1.6rem;
+    scroll-behavior: smooth;
+    text-rendering: optimizeSpeed;
+    line-height: 1.5;
+    background: black url(./assets/The-Terminator-Background.jpg) no-repeat;
+    background-size: 100% 60%;
+    object-fit: cover;
+    color: lightgray;
+    text-shadow: 2px 1px gray;
+}
+
+ul[class],
+ol[class] {
+    list-style: none;
+}
+
+a:not([class]) {
+    text-decoration-skip-ink: auto;
+}
+
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    box-shadow: none;
+    outline-offset: .05em;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+article > * + * {
+    margin-top: 1em;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 23rem;
+}
+
+header {
+    text-align: center;
+    font-size: 2.1rem;
+}
+
+.heading {
+    font-size: 2.5rem;
+}
+
+.win {
+    color: green;
+}
+
+.lose {
+    color: red;
+}
+
+.draw {
+    color: yellow;
+}
+
+main {
+    padding-bottom: 5rem;
+}
+
+.icons-area {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.scores-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8rem;
+}
+
+.player-icon, .computer-icon {
+    height: 5rem;
+    width: 5rem;
+}
+
+.answer-yes {
+    height: 4rem;
+    width: 4rem;
+    cursor: pointer;
+}
+
+.answer-no {
+    height: 5rem;
+    width: 7rem;
+    cursor: pointer;
+}
+
+.answer-yes, .answer-no {
+    transition: transform;
+    transition-duration: 0.3s;
+}
+
+.answer-yes:hover, .answer-no:hover {
+    transform: scale(1.1);
+}
+
+.player-result, .computer-result {
+    font-size: 2rem;
+    margin-top: 1rem;
+}
+
+.player-score, .computer-score {
+    color: rgb(204, 19, 19);
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.options-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.options-area img {
+    height: 5rem;
+    width: 5rem;
+}
+
+.options-area img:hover {
+    height: 6rem;
+    width: 6rem;
+}
+
+.rock, .paper, .scissors {
+    border: 1px solid gray;
+    border-radius: 1rem;
+    box-shadow: 0 0 .5rem 1px gray;
+    height: 10rem;
+    width: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+    color: white;
+}
+
+footer > a {
+    color: white;
+    text-decoration:underline;
+}
