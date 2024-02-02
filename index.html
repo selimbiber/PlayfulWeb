@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			rel="icon"
+			href="./assets/The-Terminator-Favicon.png"
+			type="image/x-icon"
+		/>
+		<link rel="stylesheet" href="./style.css" />
+		<title>Play Rock Paper Scissors Against to Computer</title>
+	</head>
+	<body>
+		<div class="container">
+			<header>
+				<h1 class="heading">Choose: Rock, Paper or Scissors.</h1>
+				<p class="report">First to score 5 points wins the game!</p>
+			</header>
+			<main>
+				<section class="iconsArea">
+					<img
+						id="left-icon"
+						class="playerIcon"
+						src="./assets/playerIcon.png"
+						alt="question mark"
+					/>
+					<img
+						id="right-icon"
+						class="computerIcon"
+						src="./assets/computerIcon.png"
+						alt="question mark"
+					/>
+				</section>
+				<section class="scoresArea">
+					<p class="playerResult">Player: <span class="playerScore">0</span></p>
+					<p class="computerResult">
+						Computer: <span class="computerScore">0</span>
+					</p>
+				</section>
+				<section class="optionsArea">
+					<div class="rock"><img src="./assets/Rock.png" alt="Rock" /></div>
+					<div class="paper"><img src="./assets/Paper.png" alt="Paper" /></div>
+					<div class="scissors">
+						<img src="./assets/Scissors.png" alt="Scissors" />
+					</div>
+				</section>
+			</main>
+			<footer>
+				Made by
+				<a
+					href="https://github.com/selimbiber/Play-Rock-Paper-Scissors"
+					title="GitHub: selimbiber"
+					target="_blank"
+					>Selim Biber</a
+				>
+				for
+				<a
+					href="https://www.theodinproject.com/lessons/foundations-rock-paper-scissors"
+					title="TheOdinProject: about"
+					target="_blank"
+					>The Odin Project</a
+				>
+			</footer>
+		</div>
+
+		<script src="./main.js"></script>
+	</body>
+</html>
