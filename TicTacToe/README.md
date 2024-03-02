@@ -25,4 +25,4 @@ Thanks for checking out my front-end coding challenge.
 - Mobile-first workflow
 - Pure JavaScript
 
-#### [Live Site URL](https://htmlpreview.github.io/?https://github.com/selimbiber/SimpleWebBrowserGames/blob/main/TicTacToe/index.html)
+#### [Live Site URL](https://htmlpreview.github.io/?https://github.com/selimbiber/PlayfulWeb/blob/main/TicTacToe/index.html)
