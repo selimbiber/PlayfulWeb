@@ -4,25 +4,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>JS Battleships</title>
   </head>
   <body>
-    <div id="game-info">
-      <p>Turn: <span id="turn-display"></span></p>
-      <p>Info: <span id="info"></span></p>
-    </div>
+    <header>
+      <h1>Battleships Game</h1>
+    </header>
 
-    <div id="gameboards-container"></div>
-    <div class="options-container">
-      <div id="0" class="destroyer-preview destroyer option" draggable="true"></div>
-      <div id="1" class="submarine-preview submarine option" draggable="true"></div>
-      <div id="2" class="cruiser-preview cruiser option" draggable="true"></div>
-      <div id="3" class="battleship-preview battleship option" draggable="true"></div>
-      <div id="4" class="carrier-preview carrier option" draggable="true"></div>
-    </div>
+    <main>
+      <div class="gameboards-container">
+        <div id="player-gameboard-container">
+          <h2>Player Fleet</h2>
+        </div>
+        <div id="computer-gameboard-container">
+          <h2>Computer Fleet</h2>
+        </div>
+      </div>
+      <div class="options-container">
+        <div id="0" class="destroyer-preview destroyer option" draggable="true"></div>
+        <div id="1" class="submarine-preview submarine option" draggable="true"></div>
+        <div id="2" class="cruiser-preview cruiser option" draggable="true"></div>
+        <div id="3" class="battleship-preview battleship option" draggable="true"></div>
+        <div id="4" class="carrier-preview carrier option" draggable="true"></div>
+      </div>
+      <div class="buttons-container">
+        <button id="flip-btn" class="flip btn">FLIP</button>
+        <button id="start-btn" class="start btn">START</button>
+        <button id="restart-btn" class="restart btn">RESTART</button>
+      </div>
+    </main>
 
-    <button id="flip-button">FLIP</button>
-    <button id="start-button">START</button>
+    <footer>
+      Coded by <a href="https://wwww.github.com/selimbiber">Selim Biber</a>
+      for
+      <a href="https://www.theodinproject.com/lessons/node-path-javascript-battleship"
+        >The Odin Project</a
+      >
+    </footer>
     <script src="app.js"></script>
   </body>
 </html>

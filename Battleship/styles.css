@@ -1,3 +1,69 @@
+:root {
+  --body-bg-color: #00e1ffaf;
+  --player-gameboard-bg-color: #2fff0053;
+  --computer-gameboard-bg-color: #95bfc668;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  font-size: 1.6rem;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans",
+    "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  background-color: var(--body-bg-color);
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1,
+h2,
+footer {
+  text-align: center;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 3rem;
+  margin-top: 5rem;
+}
+
 /* Helpers */
 
 .rotate-90-deg {
@@ -5,55 +71,72 @@
   transition: transform 0.3s ease;
 }
 
-#gameboards-container {
-  width: 440px;
+.gameboards-container {
+  width: 100%;
   display: flex;
   justify-content: space-between;
+
+  .game-board {
+    width: 200px;
+    height: 200px;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .turn {
+    scale: 120%;
+  }
+
+  .player-game-board {
+    background-color: var(--player-gameboard-bg-color);
+  }
+
+  .computer-game-board {
+    background-color: var(--computer-gameboard-bg-color);
+
+    & .block {
+      background-color: var(--computer-gameboard-bg-color);
+      cursor: crosshair;
+    }
+  }
+
+  .block {
+    width: 20px;
+    height: 20px;
+    border: 1px solid;
+    box-sizing: border-box;
+  }
+  .empty {
+    background-color: grey !important;
+  }
+
+  .boom {
+    background-color: red !important;
+
+    img {
+      height: 20px;
+      width: 20px;
+    }
+  }
 }
 
-.game-board {
-  width: 200px;
-  height: 200px;
-  background-color: pink;
-  display: flex;
-  flex-wrap: wrap;
+.hover-valid {
+  border: 2px solid green !important;
 }
 
-.player-game-board {
-  background-color: red;
-}
-
-.computer-game-board {
-  background-color: blue;
-}
-
-.block {
-  width: 20px;
-  height: 20px;
-  border: 1px solid;
-  box-sizing: border-box;
-}
-
-.hover,
-.empty {
-  background-color: grey;
-}
-
-.boom {
-  background-color: red;
+.hover-invalid {
+  border: 2px solid red !important;
 }
 
 .options-container {
-  width: 500px;
-  height: 60px;
-  margin: 30px 0;
-  background-color: yellow;
+  margin-right: auto;
   display: flex;
   align-items: center;
-}
 
-.option {
-  cursor: pointer;
+  .option {
+    cursor: pointer;
+  }
 }
 
 .destroyer {
@@ -104,4 +187,50 @@
   width: 50px;
   height: 10px;
   margin: 3px;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .btn {
+    cursor: pointer;
+    padding: 0.5rem;
+    height: 4rem;
+    width: 40%;
+    color: white;
+    font-weight: bold;
+    transition: opacity 0.3s ease;
+
+    &.flip {
+      background-color: orange;
+    }
+
+    &.start {
+      background-color: crimson;
+    }
+
+    &.restart {
+      background-color: chartreuse;
+      display: none;
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-weight: 500;
+
+  a {
+    color: black;
+    font-weight: bold;
+  }
 }
