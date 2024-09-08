@@ -1,5 +1,6 @@
 import { GameBoard } from "./GameBoard.js";
 import { Ship } from "./Ship.js";
+import { highlightArea } from "./Helpers.js";
 
 export class GameManager {
   static OPTIONS_CONTAINER = document.querySelector(".options-container");
@@ -42,27 +43,35 @@ export class GameManager {
     const dragStart = (e) => {
       notDropped = false;
       draggedShip = e.target;
+      console.log("Drag started:", draggedShip);
     };
 
     const dragOver = (e) => {
       e.preventDefault();
-      const ship = this.ships[draggedShip.id];
-      highlightArea(e.target.id, ship);
+      if (draggedShip && typeof draggedShip.id !== "undefined") {
+        console.log("Dragging over:", draggedShip.id);
+        const ship = this.ships[draggedShip.id];
+        highlightArea(e.target.id, ship, this.angle);
+      }
     };
 
     const dropShip = (e) => {
+      e.preventDefault();
+      console.log("Dropped:", draggedShip);
       const startId = e.target.id;
-      const ship = this.ships[draggedShip.id];
-      const successfulPlacement = this.addShipToBoard(ship, startId, true);
+      if (draggedShip && typeof draggedShip.id !== "undefined") {
+        const ship = this.ships[draggedShip.id];
+        const successfulPlacement = this.addShipToBoard(ship, startId, true);
 
-      if (successfulPlacement) draggedShip.remove();
+        if (successfulPlacement) draggedShip.remove();
+      }
     };
 
-    document.querySelectorAll(".option-ship").forEach((ship) => {
+    document.querySelectorAll(".option").forEach((ship) => {
       ship.addEventListener("dragstart", dragStart);
     });
 
-    document.querySelectorAll(".block").forEach((block) => {
+    document.querySelectorAll(".player-game-board .block").forEach((block) => {
       block.addEventListener("dragover", dragOver);
       block.addEventListener("drop", dropShip);
     });
