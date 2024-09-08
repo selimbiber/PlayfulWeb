@@ -1,6 +1,6 @@
 import { GameBoard } from "./GameBoard.js";
 import { Ship } from "./Ship.js";
-import { highlightArea } from "./Helpers.js";
+import { getValidity, highlightArea } from "./Helpers.js";
 
 export class GameManager {
   static OPTIONS_CONTAINER = document.querySelector(".options-container");
@@ -38,18 +38,14 @@ export class GameManager {
 
   setupDragAndDrop() {
     let draggedShip;
-    let notDropped = false;
 
     const dragStart = (e) => {
-      notDropped = false;
       draggedShip = e.target;
-      console.log("Drag started:", draggedShip);
     };
 
     const dragOver = (e) => {
       e.preventDefault();
       if (draggedShip && typeof draggedShip.id !== "undefined") {
-        console.log("Dragging over:", draggedShip.id);
         const ship = this.ships[draggedShip.id];
         highlightArea(e.target.id, ship, this.angle);
       }
@@ -57,24 +53,42 @@ export class GameManager {
 
     const dropShip = (e) => {
       e.preventDefault();
-      console.log("Dropped:", draggedShip);
       const startId = e.target.id;
       if (draggedShip && typeof draggedShip.id !== "undefined") {
         const ship = this.ships[draggedShip.id];
         const successfulPlacement = this.addShipToBoard(ship, startId, true);
 
-        if (successfulPlacement) draggedShip.remove();
+        if (successfulPlacement) {
+          draggedShip.remove();
+        }
       }
+      cleanHighlight(); // Drop işleminden sonra highlight temizle
+    };
+
+    const dragEnd = () => {
+      cleanHighlight(); // Drag işlemi tamamlandığında highlight temizle
+    };
+
+    const dragLeave = (e) => {
+      cleanHighlight(); // Fare tahtadan ayrıldığında highlight temizle
     };
 
     document.querySelectorAll(".option").forEach((ship) => {
       ship.addEventListener("dragstart", dragStart);
+      ship.addEventListener("dragend", dragEnd); // Drag end olayını ekle
     });
 
     document.querySelectorAll(".player-game-board .block").forEach((block) => {
       block.addEventListener("dragover", dragOver);
       block.addEventListener("drop", dropShip);
+      block.addEventListener("dragleave", dragLeave);
     });
+
+    const cleanHighlight = () => {
+      document.querySelectorAll(".player-game-board .block").forEach((block) => {
+        block.classList.remove("valid-highlight", "invalid-highlight");
+      });
+    };
   }
 
   startGame() {
@@ -95,7 +109,7 @@ export class GameManager {
   addShipToBoard(ship, startId, isPlayer) {
     const board = isPlayer ? this.playerBoard : this.computerBoard;
     const allBoardBlocks = Array.from(
-      document.querySelectorAll(`#${isPlayer ? "player" : "computer"} .block`)
+      document.querySelectorAll(`.${isPlayer ? "player" : "computer"}-game-board .block`)
     );
     const isHorizontal = isPlayer ? this.angle === 0 : Math.random() < 0.5;
     const startIndex = startId
