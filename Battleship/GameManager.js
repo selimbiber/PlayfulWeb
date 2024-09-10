@@ -1,13 +1,16 @@
 import { GameBoard } from "./GameBoard.js";
 import { Ship } from "./Ship.js";
-import { getValidity, highlightArea } from "./Helpers.js";
+import { highlightArea, getValidity, restoreShipOptions } from "./Helpers.js";
 
 export class GameManager {
   static OPTIONS_CONTAINER = document.querySelector(".options-container");
+  static BUTTON_IDS = {
+    flip: "flip-btn",
+    start: "start-btn",
+    restart: "restart-btn",
+  };
 
   constructor() {
-    this.playerBoard = new GameBoard("player-gameboard-container", true);
-    this.computerBoard = new GameBoard("computer-gameboard-container", false);
     this.ships = [
       new Ship("destroyer", 2),
       new Ship("submarine", 3),
@@ -15,106 +18,54 @@ export class GameManager {
       new Ship("battleship", 4),
       new Ship("carrier", 5),
     ];
-    this.currentPlayer = "player";
+
+    this.playerBoard = new GameBoard("player-gameboard-container", true);
+    this.computerBoard = new GameBoard("computer-gameboard-container", false);
+
+    this.resetGame();
     this.setupEventListeners();
     this.angle = 0;
   }
 
-  setupEventListeners() {
-    document.getElementById("flip-btn").addEventListener("click", this.flip.bind(this));
-    document
-      .getElementById("start-btn")
-      .addEventListener("click", this.startGame.bind(this));
+  resetGame() {
+    this.currentPlayer = "player";
+    this.playerHits = [];
+    this.computerHits = [];
+    this.playerSunkShips = [];
+    this.computerSunkShips = [];
+    this.gameover = false;
+    this.lastHit = null;
+    this.playerTurn = false;
+
+    this.updateButtonVisibility(true);
+    this.playerBoard.clearBoard();
+    this.computerBoard.clearBoard();
     this.setupDragAndDrop();
+    this.placeShips(this.computerBoard, false);
   }
 
-  flip() {
-    this.angle = this.angle === 0 ? 90 : 0;
-    const OPTION_SHIPS = Array.from(GameManager.OPTIONS_CONTAINER.children);
-    OPTION_SHIPS.forEach((optionShip) => {
-      optionShip.classList.toggle("rotate-90-deg", this.angle === 90);
-    });
-  }
-
-  setupDragAndDrop() {
-    let draggedShip;
-
-    const dragStart = (e) => {
-      draggedShip = e.target;
-    };
-
-    const dragOver = (e) => {
-      e.preventDefault();
-      if (draggedShip && typeof draggedShip.id !== "undefined") {
-        const ship = this.ships[draggedShip.id];
-        highlightArea(e.target.id, ship, this.angle);
-      }
-    };
-
-    const dropShip = (e) => {
-      e.preventDefault();
-      const startId = e.target.id;
-      if (draggedShip && typeof draggedShip.id !== "undefined") {
-        const ship = this.ships[draggedShip.id];
-        const successfulPlacement = this.addShipToBoard(ship, startId, true);
-
-        if (successfulPlacement) {
-          draggedShip.remove();
+  placeShips(board, isPlayer) {
+    if (!isPlayer) {
+      this.ships.forEach((ship) => {
+        let successfulPlacement = false;
+        while (!successfulPlacement) {
+          const startId = Math.floor(Math.random() * board.boardSize);
+          const isHorizontal = Math.random() < 0.5;
+          successfulPlacement = this.addShipToBoard(
+            ship,
+            startId,
+            isPlayer,
+            board,
+            isHorizontal
+          );
         }
-      }
-      cleanHighlight(); // Drop işleminden sonra highlight temizle
-    };
-
-    const dragEnd = () => {
-      cleanHighlight(); // Drag işlemi tamamlandığında highlight temizle
-    };
-
-    const dragLeave = (e) => {
-      cleanHighlight(); // Fare tahtadan ayrıldığında highlight temizle
-    };
-
-    document.querySelectorAll(".option").forEach((ship) => {
-      ship.addEventListener("dragstart", dragStart);
-      ship.addEventListener("dragend", dragEnd); // Drag end olayını ekle
-    });
-
-    document.querySelectorAll(".player-game-board .block").forEach((block) => {
-      block.addEventListener("dragover", dragOver);
-      block.addEventListener("drop", dropShip);
-      block.addEventListener("dragleave", dragLeave);
-    });
-
-    const cleanHighlight = () => {
-      document.querySelectorAll(".player-game-board .block").forEach((block) => {
-        block.classList.remove("valid-highlight", "invalid-highlight");
       });
-    };
-  }
-
-  startGame() {
-    if (typeof this.playerTurn === "undefined") {
-      if (GameManager.OPTIONS_CONTAINER.children.length !== 0) {
-        alert("Please place all your pieces first!");
-      } else {
-        const allBoardBlocks = document.querySelectorAll("#computer .block");
-        allBoardBlocks.forEach((block) =>
-          block.addEventListener("click", this.handleClick.bind(this))
-        );
-        this.playerTurn = true;
-        document.getElementById("computer-gameboard-container").className = "turn";
-      }
     }
   }
 
-  addShipToBoard(ship, startId, isPlayer) {
-    const board = isPlayer ? this.playerBoard : this.computerBoard;
-    const allBoardBlocks = Array.from(
-      document.querySelectorAll(`.${isPlayer ? "player" : "computer"}-game-board .block`)
-    );
-    const isHorizontal = isPlayer ? this.angle === 0 : Math.random() < 0.5;
-    const startIndex = startId
-      ? parseInt(startId)
-      : Math.floor(Math.random() * board.boardSize);
+  addShipToBoard(ship, startId, isPlayer, board, isHorizontal) {
+    const allBoardBlocks = this.getBoardBlocks(isPlayer);
+    const startIndex = startId || Math.floor(Math.random() * board.boardSize);
 
     const { shipBlocks, isValidPlacement, isNotTaken } = getValidity(
       allBoardBlocks,
@@ -123,108 +74,147 @@ export class GameManager {
       ship
     );
 
-    if (isValidPlacement && isNotTaken) {
-      shipBlocks.forEach((block) => {
-        block.classList.add(ship.name);
-        block.classList.add("taken");
-      });
-      return true;
-    }
+    console.log(`Ship: ${ship.name}`);
+    console.log(`Start Index: ${startIndex}`);
+    console.log(`Is Valid Placement: ${isValidPlacement}`);
+    console.log(`Is Not Taken: ${isNotTaken}`);
+    console.log(`Ship Blocks:`, shipBlocks);
 
-    if (!isPlayer) {
-      return this.addShipToBoard(ship, null, false);
+    if (isValidPlacement && isNotTaken) {
+      shipBlocks.forEach((block) => block.classList.add(ship.name, "taken"));
+      return true;
     }
     return false;
   }
 
-  handleClick(e) {
-    if (this.gameover) return;
+  setupEventListeners() {
+    document
+      .getElementById(GameManager.BUTTON_IDS.flip)
+      .addEventListener("click", this.flip.bind(this));
+    document
+      .getElementById(GameManager.BUTTON_IDS.start)
+      .addEventListener("click", this.startGame.bind(this));
+    document
+      .getElementById(GameManager.BUTTON_IDS.restart)
+      .addEventListener("click", this.restartGame.bind(this));
+  }
 
-    const target = e.target;
-    const block = target.classList.contains("block") ? target : target.closest(".block");
+  flip() {
+    this.angle = this.angle === 0 ? 90 : 0;
+    Array.from(GameManager.OPTIONS_CONTAINER.children).forEach((optionShip) =>
+      optionShip.classList.toggle("rotate-90-deg", this.angle === 90)
+    );
+  }
 
-    if (block.classList.contains("boom")) {
+  setupDragAndDrop() {
+    let draggedShip;
+
+    const dragStart = (e) => (draggedShip = e.target);
+
+    const dragOver = (e) => {
+      e.preventDefault();
+      const target = e.target.closest(".block");
+      if (draggedShip && target) {
+        const ship = this.ships[draggedShip.id];
+        highlightArea(target.id, ship, this.angle);
+      }
+    };
+
+    const dropShip = (e) => {
+      e.preventDefault();
+      const target = e.target.closest(".block");
+      if (draggedShip && target) {
+        const ship = this.ships[draggedShip.id];
+        console.log(`Dropping ship: ${ship.name} at ${target.id}`);
+        const success = this.addShipToBoard(
+          ship,
+          target.id,
+          true,
+          this.playerBoard,
+          this.angle === 0
+        );
+        if (success) {
+          draggedShip.remove();
+          console.log(`Ship ${ship.name} successfully placed.`);
+        } else {
+          console.log(`Failed to place ship ${ship.name}.`);
+        }
+        this.cleanHighlight();
+      }
+    };
+
+    const dragEnd = () => this.cleanHighlight();
+    const dragLeave = () => this.cleanHighlight();
+
+    document.querySelectorAll(".option").forEach((ship) => {
+      ship.addEventListener("dragstart", dragStart);
+      ship.addEventListener("dragend", dragEnd);
+    });
+
+    document.querySelectorAll(".player-game-board .block").forEach((block) => {
+      block.addEventListener("dragover", dragOver);
+      block.addEventListener("drop", dropShip);
+      block.addEventListener("dragleave", dragLeave);
+    });
+  }
+
+  cleanHighlight() {
+    document.querySelectorAll(".player-game-board .block").forEach((block) => {
+      block.classList.remove("valid-highlight", "invalid-highlight");
+    });
+  }
+
+  handleClick(event) {
+    const blockId = event.target.id;
+    console.log(`Clicked block ID: ${blockId}`);
+  }
+
+  startGame() {
+    if (GameManager.OPTIONS_CONTAINER.children.length !== 0) {
+      alert("Please place all your pieces first!");
       return;
     }
 
-    if (block.classList.contains("taken")) {
-      block.classList.add("boom");
-      if (block && block.appendChild) {
-        block.appendChild(document.getElementById("boom-img").cloneNode(true));
-      }
-      document.getElementById("hitting-sound").play();
-
-      let classes = Array.from(block.classList);
-      classes = classes.filter(
-        (className) => !["block", "boom", "taken"].includes(className)
-      );
-      this.playerHits.push(...classes);
-      checkScore("Player", this.playerHits, this.PLAYER_SUNK_SHIPS);
-    } else {
-      block.classList.add("empty");
-      document.getElementById("missing-sound").play();
-    }
-
-    this.playerTurn = false;
-    const allBoardBlocks = document.querySelectorAll("#computer .block");
-    allBoardBlocks.forEach((block) => {
-      const clonedBlock = block.cloneNode(true);
-      block.replaceWith(clonedBlock);
+    document.querySelectorAll(".computer-game-board .block").forEach((block) => {
+      block.addEventListener("click", this.handleClick.bind(this));
     });
-    setTimeout(() => this.computerTurn(), 3000);
+
+    this.playerTurn = true;
+    this.updateTurnIndicators();
+    this.updateButtonVisibility(false);
   }
 
-  computerTurn() {
-    if (this.gameover) return;
-    document.getElementById("computer-gameboard-container").removeAttribute("class");
-    document.getElementById("player-gameboard-container").className = "turn";
+  restartGame() {
+    this.updateButtonVisibility(true);
+    this.resetGame();
+    restoreShipOptions(GameManager.OPTIONS_CONTAINER);
+    this.setupDragAndDrop();
+  }
 
-    setTimeout(() => {
-      let randomGo;
-      if (this.lastHit) {
-        const adjacent = getAdjacentBlocks(this.lastHit);
-        randomGo = adjacent.find(
-          (index) =>
-            !document.querySelectorAll("#player .block")[index].classList.contains("boom")
-        );
-      }
-      if (!randomGo) {
-        randomGo = Math.floor(Math.random() * this.boardSize);
-      }
+  updateTurnIndicators() {
+    document
+      .getElementById("computer-gameboard-container")
+      .classList.toggle("turn", this.playerTurn);
+    document
+      .getElementById("player-gameboard-container")
+      .classList.toggle("turn", !this.playerTurn);
+  }
 
-      const allBoardBlocks = document.querySelectorAll("#player .block");
-      const element = allBoardBlocks[randomGo];
+  updateButtonVisibility(show) {
+    document.getElementById(GameManager.BUTTON_IDS.flip).style.display = show
+      ? "block"
+      : "none";
+    document.getElementById(GameManager.BUTTON_IDS.start).style.display = show
+      ? "block"
+      : "none";
+    document.getElementById(GameManager.BUTTON_IDS.restart).style.display = show
+      ? "none"
+      : "block";
+  }
 
-      if (element.classList.contains("boom")) {
-        this.computerTurn();
-        return;
-      }
-
-      if (element.classList.contains("taken")) {
-        element.classList.add("boom");
-        element.appendChild(document.getElementById("boom-img").cloneNode(true));
-        document.getElementById("hitting-sound").play();
-        this.lastHit = randomGo;
-        let classes = Array.from(element.classList);
-        classes = classes.filter(
-          (className) => !["block", "boom", "taken"].includes(className)
-        );
-        this.computerHits.push(...classes);
-        checkScore("Computer", this.computerHits, this.COMPUTER_SUNK_SHIPS);
-      } else {
-        element.classList.add("empty");
-        document.getElementById("missing-sound").play();
-      }
-    }, 3000);
-
-    setTimeout(() => {
-      this.playerTurn = true;
-      document.getElementById("player--container").removeAttribute("class");
-      document.getElementById("computer-gameboard-container").className = "turn";
-      const allBoardBlocks = document.querySelectorAll("#computer .block");
-      allBoardBlocks.forEach((block) =>
-        block.addEventListener("click", this.handleClick.bind(this))
-      );
-    }, 6000);
+  getBoardBlocks(isPlayer) {
+    return Array.from(
+      document.querySelectorAll(`.${isPlayer ? "player" : "computer"}-game-board .block`)
+    );
   }
 }

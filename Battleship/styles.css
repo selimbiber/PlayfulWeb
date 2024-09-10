@@ -107,17 +107,20 @@ main {
     border: 1px solid;
     box-sizing: border-box;
   }
-  .empty {
-    background-color: grey !important;
-  }
+}
 
-  .boom {
-    background-color: red !important;
+.empty {
+  background-color: black !important;
+  cursor: not-allowed;
+}
 
-    img {
-      height: 20px;
-      width: 20px;
-    }
+.boom {
+  background-color: red !important;
+
+  img {
+    height: 20px;
+    width: 20px;
+    cursor: not-allowed;
   }
 }
 
@@ -189,7 +192,7 @@ main {
   margin: 3px;
 }
 
-.taken {
+.player-game-board .taken {
   border: 0 !important;
 }
 
