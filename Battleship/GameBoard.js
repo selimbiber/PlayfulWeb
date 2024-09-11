@@ -4,21 +4,34 @@ export class GameBoard {
     this.isPlayer = isPlayer;
     this.boardSize = 100;
     this.blocks = [];
-    this.createBoard();
   }
 
   createBoard() {
+    this.clearBoard();
     const boardContainer = this.createBoardContainer();
     const fragment = this.createBoardBlocks();
     boardContainer.appendChild(fragment);
     this.container.appendChild(boardContainer);
+  }
 
-    if (this.isPlayer) {
-      this.addDataAttributesToBlocks();
+  clearBoard() {
+    const boardContainer = this.container.querySelector(
+      `.${this.isPlayer ? "player" : "computer"}-game-board`
+    );
+    if (boardContainer) {
+      boardContainer.innerHTML = "";
+      this.blocks = [];
     }
   }
 
   createBoardContainer() {
+    const existingContainer = this.container.querySelector(
+      `.${this.isPlayer ? "player" : "computer"}-game-board`
+    );
+    if (existingContainer) {
+      return existingContainer;
+    }
+
     const boardContainer = document.createElement("div");
     boardContainer.className = `${
       this.isPlayer ? "player" : "computer"
@@ -41,21 +54,5 @@ export class GameBoard {
     block.className = "block";
     block.id = id;
     return block;
-  }
-
-  addDataAttributesToBlocks() {
-    document.querySelectorAll(".player-game-board .block").forEach((block, index) => {
-      block.dataset.index = index;
-    });
-  }
-
-  getBlockById(id) {
-    return this.blocks[id];
-  }
-
-  clearBoard() {
-    this.blocks.forEach((block) => {
-      block.className = "block"; // Clear all classes
-    });
   }
 }

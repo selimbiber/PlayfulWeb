@@ -44,7 +44,7 @@ body {
     "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol", "Noto Color Emoji";
   background-color: var(--body-bg-color);
-  max-width: 500px;
+  max-width: 550px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -71,10 +71,14 @@ main {
   transition: transform 0.3s ease;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .gameboards-container {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 
   .game-board {
     width: 200px;
@@ -220,7 +224,7 @@ main {
 
     &.restart {
       background-color: chartreuse;
-      display: none;
+      width: 100%;
     }
 
     &:hover {
