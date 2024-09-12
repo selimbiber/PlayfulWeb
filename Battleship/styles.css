@@ -137,9 +137,10 @@ main {
 }
 
 .options-container {
-  margin-right: auto;
+  margin: 3rem auto 0 2rem;
   display: flex;
   align-items: center;
+  scale: 120%;
 
   .option {
     cursor: pointer;

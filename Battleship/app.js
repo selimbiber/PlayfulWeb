@@ -2,8 +2,8 @@ import { GameManager } from "./GameManager.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const gameManager = new GameManager();
-  gameManager.playerBoard.createBoard();
-  gameManager.computerBoard.createBoard();
+  gameManager.playerBoard.createGameBoard();
+  gameManager.computerBoard.createGameBoard();
   gameManager.setupDragAndDrop();
   initializeGame();
 });

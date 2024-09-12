@@ -46,25 +46,26 @@ export class GameManager {
     this.computerHits = [];
     this.playerSunkShips.clear(); // Clear the set of sunk ships
     this.computerSunkShips.clear(); // Clear the set of sunk ships
-    this.gameover = false;
+    this.gameover = true;
     this.lastHit = null;
     this.playerTurn = false;
     this.angle = 0;
 
-    document.getElementById("computer-gameboard-container").removeAttribute("class");
-    document.getElementById("player-gameboard-container").removeAttribute("class");
+    document.getElementById("player-gameboard-container").className = "turn";
+    document.getElementById("computer-gameboard-container").className = "hidden";
 
     this.updateButtonVisibility(true);
-    this.playerBoard.clearBoard();
-    this.computerBoard.clearBoard();
-    this.playerBoard.createBoard();
-    this.computerBoard.createBoard();
+    this.playerBoard.clearGameBoard();
+    this.playerBoard.createGameBoard();
+    this.computerBoard.createGameBoard();
     this.setupDragAndDrop();
     this.placeShips(this.computerBoard, false);
   }
 
   placeShips(board, isPlayer) {
     if (!isPlayer) {
+      this.computerBoard.clearGameBoard();
+      this.computerBoard.createGameBoard();
       this.ships.forEach((ship) => {
         let attempts = 0;
         let successfulPlacement = false;
@@ -95,12 +96,10 @@ export class GameManager {
     );
 
     if (isValidPlacement && isNotTaken) {
-      shipBlocks.forEach((block) => block.classList.add(ship.name, "taken"));
-      if (isPlayer) {
-        shipBlocks.forEach((block) => {
-          block.dataset.shipId = ship.name;
-        });
-      }
+      shipBlocks.forEach((block) => {
+        block.classList.add(ship.name, "taken");
+        block.dataset.shipId = ship.name;
+      });
       return true;
     }
     return false;
@@ -190,7 +189,6 @@ export class GameManager {
       block.addEventListener("dragover", dragOver);
       block.addEventListener("drop", dropShip);
       block.addEventListener("dragleave", dragLeave);
-      block.addEventListener("click", this.handleClick.bind(this));
     });
   }
 
@@ -208,18 +206,22 @@ export class GameManager {
       GameManager.hittingSound.play();
 
       if (shipName) {
-        if (this.isSunk(shipName, isPlayer)) {
-          isPlayer
-            ? this.playerSunkShips.add(shipName)
-            : this.computerSunkShips.add(shipName);
+        const isSunkShip = this.isSunk(shipName, isPlayer);
+        if (isSunkShip) {
+          (isPlayer ? this.playerSunkShips : this.computerSunkShips).add(shipName);
           alert(`${shipName} is sunk!`);
           GameManager.sunkSound.play();
         }
-        return;
+        this.checkScore(
+          isPlayer ? "Player" : "Computer",
+          isPlayer ? this.playerHits : this.computerHits,
+          isPlayer ? this.playerSunkShips : this.computerSunkShips
+        );
       }
+    } else {
+      block.classList.add("empty");
+      GameManager.missingSound.play();
     }
-    block.classList.add("empty");
-    GameManager.missingSound.play();
   }
 
   startGame() {
@@ -227,22 +229,36 @@ export class GameManager {
       alert("Please place all your pieces first!");
       return;
     }
+    document.getElementById("player-gameboard-container").removeAttribute("class");
+    document.getElementById("computer-gameboard-container").className = "turn";
+
     this.placeShips(this.computerBoard, false);
     document.querySelectorAll(".computer-game-board .block").forEach((block) => {
       block.addEventListener("click", this.handleClick.bind(this));
     });
 
-    document.getElementById("computer-gameboard-container").className = "turn";
-
+    this.gameover = false;
     this.playerTurn = true;
     this.updateButtonVisibility(false);
   }
 
   restartGame() {
+    this.stopAllSounds();
     this.resetGame();
     restoreShipOptions(GameManager.OPTIONS_CONTAINER);
     this.setupDragAndDrop();
     this.updateButtonVisibility(true);
+  }
+
+  stopAllSounds() {
+    GameManager.hittingSound.pause();
+    GameManager.hittingSound.currentTime = 0;
+
+    GameManager.missingSound.pause();
+    GameManager.missingSound.currentTime = 0;
+
+    GameManager.sunkSound.pause();
+    GameManager.sunkSound.currentTime = 0;
   }
 
   updateButtonVisibility(show) {
@@ -268,7 +284,7 @@ export class GameManager {
 
     if (!block || block.classList.contains("boom")) return;
 
-    if (block.classList.contains("taken")) {
+    if (block.classList.contains("taken") && !block.classList.contains("boom")) {
       block.classList.add("boom");
       const boomImg = document.createElement("img");
       boomImg.src = "./assets/images/boom.png";
@@ -280,11 +296,11 @@ export class GameManager {
         GameManager.sunkSound.play();
         this.playerSunkShips.add(block.dataset.shipId);
         this.checkScore("Player", this.playerHits, this.playerSunkShips);
-        return;
+      } else {
+        GameManager.hittingSound.play();
+        this.playerHits.push(block.dataset.shipId);
+        this.checkScore("Player", this.playerHits, this.playerSunkShips);
       }
-      GameManager.hittingSound.play();
-      this.playerHits.push(block.dataset.shipId);
-      this.checkScore("Player", this.playerHits, this.playerSunkShips);
     } else {
       block.classList.add("empty");
       GameManager.missingSound.play();
@@ -292,11 +308,6 @@ export class GameManager {
     }
 
     this.playerTurn = false;
-    document.querySelectorAll(".computer-game-board .block").forEach((block) => {
-      const clonedBlock = block.cloneNode(true);
-      block.replaceWith(clonedBlock);
-    });
-
     setTimeout(() => this.computerTurn(), 3000);
   }
 
@@ -327,7 +338,10 @@ export class GameManager {
       const allPlayerBoardBlocks = document.querySelectorAll(".player-game-board .block");
       const element = allPlayerBoardBlocks[randomGo];
 
-      if (!element || element.classList.contains("boom")) return;
+      if (!element || element.classList.contains("boom")) {
+        this.playerTurn = false;
+        this.lastHit = null;
+      }
 
       if (element.classList.contains("taken")) {
         element.classList.add("boom");
@@ -347,18 +361,19 @@ export class GameManager {
           }
           this.checkScore("Computer", this.computerHits, this.computerSunkShips);
         }
-        return;
+      } else {
+        element.classList.add("empty");
+        GameManager.missingSound.play();
+        this.lastHit = null;
       }
-      element.classList.add("empty");
-      GameManager.missingSound.play();
-      this.lastHit = null;
 
       this.playerTurn = true;
+      this.stopAllSounds();
       document.getElementById("player-gameboard-container").classList.remove("turn");
       document.getElementById("computer-gameboard-container").classList.add("turn");
 
       document
-        .querySelectorAll(".player-game-board .block")
+        .querySelectorAll(".computer-game-board .block")
         .forEach((block) => block.addEventListener("click", this.handleClick.bind(this)));
 
       this.checkGameOver();
@@ -373,27 +388,36 @@ export class GameManager {
       (block) => block.dataset.shipId === shipName
     );
 
-    return allBlocks.every((block) => block.classList.contains("boom"));
+    return (
+      allBlocks.length > 0 && allBlocks.every((block) => block.classList.contains("boom"))
+    );
   }
 
   checkScore(playerType, hits, sunkShips) {
+    const allShips = ["destroyer", "submarine", "cruiser", "battleship", "carrier"];
     const sunkShipsSet = new Set(sunkShips);
 
-    hits.forEach((hit) => {
-      if (!sunkShipsSet.has(hit)) {
-        sunkShipsSet.add(hit);
+    allShips.forEach((ship) => {
+      if (this.isSunk(ship, playerType === "Player")) {
+        sunkShipsSet.add(ship);
       }
     });
+
+    if (playerType === "Player") {
+      this.playerSunkShips = sunkShipsSet;
+    } else {
+      this.computerSunkShips = sunkShipsSet;
+    }
   }
 
   checkGameOver() {
     const allShips = ["destroyer", "submarine", "cruiser", "battleship", "carrier"];
 
     if (allShips.every((ship) => this.playerSunkShips.has(ship))) {
-      console.log("Computer wins!");
+      alert("Computer wins!");
       this.gameover = true;
     } else if (allShips.every((ship) => this.computerSunkShips.has(ship))) {
-      console.log("Player wins!");
+      alert("Player wins!");
       this.gameover = true;
     }
   }

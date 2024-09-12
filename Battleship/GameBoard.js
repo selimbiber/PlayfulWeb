@@ -6,15 +6,7 @@ export class GameBoard {
     this.blocks = [];
   }
 
-  createBoard() {
-    this.clearBoard();
-    const boardContainer = this.createBoardContainer();
-    const fragment = this.createBoardBlocks();
-    boardContainer.appendChild(fragment);
-    this.container.appendChild(boardContainer);
-  }
-
-  clearBoard() {
+  clearGameBoard() {
     const boardContainer = this.container.querySelector(
       `.${this.isPlayer ? "player" : "computer"}-game-board`
     );
@@ -24,7 +16,14 @@ export class GameBoard {
     }
   }
 
-  createBoardContainer() {
+  createGameBoard() {
+    const gameBoard = this.createGameBoardContainer();
+    const fragment = this.createGameBoardBlocks();
+    gameBoard.appendChild(fragment);
+    this.container.appendChild(gameBoard);
+  }
+
+  createGameBoardContainer() {
     const existingContainer = this.container.querySelector(
       `.${this.isPlayer ? "player" : "computer"}-game-board`
     );
@@ -32,14 +31,14 @@ export class GameBoard {
       return existingContainer;
     }
 
-    const boardContainer = document.createElement("div");
-    boardContainer.className = `${
+    const gameBoard = document.createElement("div");
+    gameBoard.className = `${
       this.isPlayer ? "player" : "computer"
     }-game-board game-board`;
-    return boardContainer;
+    return gameBoard;
   }
 
-  createBoardBlocks() {
+  createGameBoardBlocks() {
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < this.boardSize; i++) {
       const block = this.createBlock(i);
